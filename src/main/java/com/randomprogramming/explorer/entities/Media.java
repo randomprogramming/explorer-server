@@ -16,4 +16,11 @@ public class Media {
     private UUID id;
 
     private String url;
+
+    public Media() {
+    }
+
+    public Media(String url) {
+        this.url = url;
+    }
 }

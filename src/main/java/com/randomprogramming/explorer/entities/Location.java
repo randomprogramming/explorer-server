@@ -27,4 +27,14 @@ public class Location {
 
     @ManyToMany(mappedBy = "likedLocations")
     private Set<Person> likedBy;
+
+    public Location() {
+    }
+
+    public Location(double latitude, double longitude, String title, Set<Media> media) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.title = title;
+        this.media = media;
+    }
 }
