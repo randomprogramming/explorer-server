@@ -4,6 +4,7 @@ import com.randomprogramming.explorer.exceptions.InformationMissingException;
 import com.randomprogramming.explorer.exceptions.PasswordException;
 import com.randomprogramming.explorer.models.LoginModel;
 import com.randomprogramming.explorer.models.PersonModel;
+import com.randomprogramming.explorer.responses.Token;
 import com.randomprogramming.explorer.services.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +37,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginModel model) {
+    public ResponseEntity<?> login(@RequestBody LoginModel model) {
         try {
             String token = personService.login(model.getUsername(), model.getPassword());
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            return new ResponseEntity<>(new Token(token), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -4,10 +4,7 @@ import com.randomprogramming.explorer.models.LocationModel;
 import com.randomprogramming.explorer.services.LocationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/location")
@@ -30,4 +27,9 @@ public class LocationController {
                     "Failed to add location, please try again.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+//    @PostMapping("/like/{id}")
+//    public ResponseEntity<String> likeLocation(@RequestParam String id) {
+//        return new ResponseEntity<>("Hello worl");
+//    }
 }

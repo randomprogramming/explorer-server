@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class PersonService {
@@ -63,5 +64,10 @@ public class PersonService {
     public String login(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         return tokenProvider.createToken(username);
+    }
+
+    public String getUsernameFromRequest(HttpServletRequest req) {
+        String token = tokenProvider.extractTokenFromRequest(req);
+        return tokenProvider.getSubjectFromToken(token);
     }
 }
