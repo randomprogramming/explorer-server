@@ -18,5 +18,6 @@ public class Location {
     @Column(nullable = false)
     private double longitude;
 
-
+    @Column(nullable = false)
+    private String title;
 }

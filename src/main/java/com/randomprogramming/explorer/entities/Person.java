@@ -22,4 +22,14 @@ public class Person {
 
     @Column(nullable = false)
     private String password;
+
+    public Person() {
+    }
+
+    public Person(boolean isEnabled, String email, String username, String password) {
+        this.isEnabled = isEnabled;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
 }
