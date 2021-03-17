@@ -3,6 +3,7 @@ package com.randomprogramming.explorer.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -22,6 +23,14 @@ public class Person {
 
     @Column(nullable = false)
     private String password;
+
+    @ManyToMany
+    @JoinTable(
+            name = "person_liked_locations",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
+    private Set<Location> likedLocations;
 
     public Person() {
     }

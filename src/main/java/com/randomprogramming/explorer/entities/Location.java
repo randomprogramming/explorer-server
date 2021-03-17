@@ -3,6 +3,7 @@ package com.randomprogramming.explorer.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -20,4 +21,10 @@ public class Location {
 
     @Column(nullable = false)
     private String title;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Media> media;
+
+    @ManyToMany(mappedBy = "likedLocations")
+    private Set<Person> likedBy;
 }
