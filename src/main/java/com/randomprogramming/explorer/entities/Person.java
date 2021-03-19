@@ -1,5 +1,6 @@
 package com.randomprogramming.explorer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
+    @JsonIgnore
     private boolean isEnabled;
 
     @Column(unique = true)
@@ -21,6 +23,7 @@ public class Person {
     @Column(unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
