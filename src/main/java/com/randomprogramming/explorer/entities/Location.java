@@ -1,6 +1,7 @@
 package com.randomprogramming.explorer.entities;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org.hibernate.id.UUIDGenerator")
@@ -28,13 +30,14 @@ public class Location {
     @ManyToMany(mappedBy = "likedLocations")
     private Set<Person> likedBy;
 
-    public Location() {
-    }
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Person createdBy;
 
-    public Location(double latitude, double longitude, String title, Set<Media> media) {
+    public Location(double latitude, double longitude, String title, Set<Media> media, Person createdBy) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
         this.media = media;
+        this.createdBy = createdBy;
     }
 }

@@ -30,11 +30,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(HttpMethod.POST, "/api/register")
                 .antMatchers(HttpMethod.POST, "/api/login");
-
-        // TODO: Remove this, this is only here for testing purposes so we don't have
-        // to be logged in for each request.
-        web.ignoring()
-                .antMatchers("/api/location");
     }
 
     @Override

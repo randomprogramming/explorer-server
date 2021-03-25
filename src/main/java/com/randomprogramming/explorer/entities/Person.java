@@ -2,6 +2,7 @@ package com.randomprogramming.explorer.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org.hibernate.id.UUIDGenerator")
@@ -35,8 +37,8 @@ public class Person {
     )
     private Set<Location> likedLocations;
 
-    public Person() {
-    }
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Location> addedLocations;
 
     public Person(boolean isEnabled, String email, String username, String password) {
         this.isEnabled = isEnabled;

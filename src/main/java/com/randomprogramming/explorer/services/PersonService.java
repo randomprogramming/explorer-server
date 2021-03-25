@@ -70,4 +70,8 @@ public class PersonService {
         String token = tokenProvider.extractTokenFromRequest(req);
         return tokenProvider.getSubjectFromToken(token);
     }
+
+    public Person getPersonFromUsername(String username) {
+        return personRepository.findByUsername(username);
+    }
 }

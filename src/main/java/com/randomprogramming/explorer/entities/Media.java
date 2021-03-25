@@ -1,6 +1,7 @@
 package com.randomprogramming.explorer.entities;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,15 +11,13 @@ import java.util.UUID;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Media {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     private String url;
-
-    public Media() {
-    }
 
     public Media(String url) {
         this.url = url;
