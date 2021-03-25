@@ -1,6 +1,6 @@
 package com.randomprogramming.explorer.controllers;
 
-import com.randomprogramming.explorer.responses.Username;
+import com.randomprogramming.explorer.entities.Person;
 import com.randomprogramming.explorer.services.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,8 @@ public class PersonController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Username> getMe(HttpServletRequest req) {
-        return new ResponseEntity<>(new Username(personService.getUsernameFromRequest(req)), HttpStatus.OK);
+    public ResponseEntity<Person> getMe(HttpServletRequest req) {
+        return new ResponseEntity<>(
+                personService.getPersonFromUsername(personService.getUsernameFromRequest(req)), HttpStatus.OK);
     }
 }

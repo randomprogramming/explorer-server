@@ -53,10 +53,12 @@ public class PersonService {
             throw new PasswordException("Entered passwords don't match.");
         }
 
+        // TODO: Implement actual way to let users pick their profile picture
+        String profilePictureUrl = "https://i.imgur.com/UooC8R8.png";
         var person = new Person(true,
                 model.getEmail(),
                 model.getUsername(),
-                passwordEncoder.encode(model.getPassword()));
+                passwordEncoder.encode(model.getPassword()), profilePictureUrl);
 
         personRepository.save(person);
     }

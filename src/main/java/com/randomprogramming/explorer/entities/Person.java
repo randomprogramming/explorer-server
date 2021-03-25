@@ -29,21 +29,25 @@ public class Person {
     @Column(nullable = false)
     private String password;
 
+    private String profilePictureUrl;
+
     @ManyToMany
     @JoinTable(
             name = "person_liked_locations",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id")
     )
+    @JsonIgnore
     private Set<Location> likedLocations;
 
     @OneToMany(mappedBy = "createdBy")
     private Set<Location> addedLocations;
 
-    public Person(boolean isEnabled, String email, String username, String password) {
+    public Person(boolean isEnabled, String email, String username, String password, String profilePictureUrl) {
         this.isEnabled = isEnabled;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.profilePictureUrl = profilePictureUrl;
     }
 }
