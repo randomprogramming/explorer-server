@@ -35,8 +35,20 @@ public class LocationController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @PostMapping("/like/{id}")
-//    public ResponseEntity<String> likeLocation(@RequestParam String id) {
-//        return new ResponseEntity<>("Hello world");
-//    }
+    @GetMapping
+    public ResponseEntity<?> searchLocations(@RequestParam String searchQuery) {
+        if (searchQuery == null || searchQuery.length() == 0) {
+            return new ResponseEntity<>("Search query is missing.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(locationService.searchLocations(searchQuery), HttpStatus.OK);
+    }
+
+    @GetMapping("/like/{id}")
+    public ResponseEntity<String> markLocationAsLiked(@PathVariable String id, HttpServletRequest req) {
+        if (locationService.markLocationAsLiked(id, personService.getUsernameFromRequest(req)))
+            return new ResponseEntity<>("Location liked!", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(
+                    "Failed to like location, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

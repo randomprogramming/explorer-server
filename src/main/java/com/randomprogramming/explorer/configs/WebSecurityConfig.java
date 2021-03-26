@@ -29,7 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Following endpoints should be exempt from JWT authentication
         web.ignoring()
                 .antMatchers(HttpMethod.POST, "/api/register")
-                .antMatchers(HttpMethod.POST, "/api/login");
+                .antMatchers(HttpMethod.POST, "/api/login")
+                .antMatchers(HttpMethod.GET, "/api/location");
     }
 
     @Override

@@ -1,19 +1,22 @@
 package com.randomprogramming.explorer.entities;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
-@Data
+// Lombok hashcode breaks everything, do not use
+@ToString
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Location {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
+    private String id;
 
     @Column(nullable = false)
     private double latitude;

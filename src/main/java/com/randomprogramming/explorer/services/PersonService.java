@@ -6,6 +6,7 @@ import com.randomprogramming.explorer.exceptions.PasswordException;
 import com.randomprogramming.explorer.models.PersonModel;
 import com.randomprogramming.explorer.repositories.PersonRepository;
 import com.randomprogramming.explorer.security.JwtTokenProvider;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +16,7 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 
 @Service
+@Log4j2
 public class PersonService {
     final private PersonRepository personRepository;
 
@@ -32,6 +34,17 @@ public class PersonService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
+    }
+
+    public boolean save(Person person) {
+        try {
+            personRepository.save(person);
+            return true;
+        } catch (Exception e) {
+            log.error("Failed when saving person: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void registerPerson(PersonModel model)
@@ -60,7 +73,7 @@ public class PersonService {
                 model.getUsername(),
                 passwordEncoder.encode(model.getPassword()), profilePictureUrl);
 
-        personRepository.save(person);
+        save(person);
     }
 
     public String login(String username, String password) {

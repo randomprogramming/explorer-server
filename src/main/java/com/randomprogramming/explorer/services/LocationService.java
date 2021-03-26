@@ -5,15 +5,17 @@ import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.randomprogramming.explorer.entities.Location;
 import com.randomprogramming.explorer.entities.Media;
+import com.randomprogramming.explorer.entities.Person;
 import com.randomprogramming.explorer.models.LocationModel;
 import com.randomprogramming.explorer.repositories.LocationRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -60,6 +62,33 @@ public class LocationService {
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Page<Location> searchLocations(String searchQuery) {
+        // TODO: Implement searchability by location too
+        // Also maybe increase the size of the searched fields? Idk
+        // TODO: Also make the search actually do something because right now you have to type the exact
+        // name of the location
+        Page<Location> locations = locationRepository.findAllByTitleLike(searchQuery, PageRequest.of(0, 15));
+        return locations;
+    }
+
+    public boolean markLocationAsLiked(String locationId, String personUsername) {
+        Person person = personService.getPersonFromUsername(personUsername);
+        if (person == null) return false;
+
+        Optional<Location> location = locationRepository.findFirstById(locationId);
+
+        if (location.isPresent()) {
+            // Since we're using a Set, we don't have to check if user already liked the location
+            Set<Location> likedLocations = person.getLikedLocations();
+            likedLocations.add(location.get());
+            person.setLikedLocations(likedLocations);
+
+            return personService.save(person);
+        } else {
             return false;
         }
     }
