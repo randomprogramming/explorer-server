@@ -3,8 +3,10 @@ package com.randomprogramming.explorer.controllers;
 import com.randomprogramming.explorer.models.LocationModel;
 import com.randomprogramming.explorer.services.LocationService;
 import com.randomprogramming.explorer.services.PersonService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/location")
+@Log4j2
 public class LocationController {
     final private LocationService locationService;
 
@@ -50,5 +53,16 @@ public class LocationController {
         else
             return new ResponseEntity<>(
                     "Failed to like location, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/liked")
+    public ResponseEntity<?> getLikedLocations(HttpServletRequest req) {
+        try {
+            return new ResponseEntity<>(
+                    locationService.getLikedLocations(personService.getUsernameFromRequest(req)), HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            log.error(e);
+            return new ResponseEntity<>("Username not found.", HttpStatus.BAD_REQUEST);
+        }
     }
 }

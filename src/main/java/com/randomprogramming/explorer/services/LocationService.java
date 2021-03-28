@@ -11,6 +11,7 @@ import com.randomprogramming.explorer.repositories.LocationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,5 +92,13 @@ public class LocationService {
         } else {
             return false;
         }
+    }
+
+    // TODO: Implement pagination
+    public Set<Location> getLikedLocations(String username) throws UsernameNotFoundException {
+        Person person = personService.getPersonFromUsername(username);
+        if (person == null) throw new UsernameNotFoundException("Username " + username + " was not found.");
+
+        return person.getLikedLocations();
     }
 }
