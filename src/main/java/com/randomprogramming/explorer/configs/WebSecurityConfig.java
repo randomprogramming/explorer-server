@@ -30,7 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(HttpMethod.POST, "/api/register")
                 .antMatchers(HttpMethod.POST, "/api/login")
-                .antMatchers(HttpMethod.GET, "/api/location");
+                .antMatchers(HttpMethod.GET, "/api/location")
+                .antMatchers(HttpMethod.POST, "/api/location/region");
     }
 
     @Override

@@ -13,4 +13,7 @@ public interface LocationRepository extends JpaRepository<Location, String> {
     Optional<Location> findFirstById(String id);
 
     Page<Location> findAllByTitleLike(String title, Pageable pageable);
+
+    Page<Location> findAllByLatitudeBetweenAndLongitudeBetween(
+            double latitudeMin, double latitudeMax, double longitudeMin, double longitudeMax, Pageable pageable);
 }

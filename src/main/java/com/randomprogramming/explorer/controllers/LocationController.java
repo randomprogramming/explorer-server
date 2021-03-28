@@ -1,6 +1,7 @@
 package com.randomprogramming.explorer.controllers;
 
 import com.randomprogramming.explorer.models.LocationModel;
+import com.randomprogramming.explorer.models.RegionModel;
 import com.randomprogramming.explorer.services.LocationService;
 import com.randomprogramming.explorer.services.PersonService;
 import lombok.extern.log4j.Log4j2;
@@ -64,5 +65,10 @@ public class LocationController {
             log.error(e);
             return new ResponseEntity<>("Username not found.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/region")
+    public ResponseEntity<?> searchRegionForLocations(@RequestBody RegionModel model) {
+        return new ResponseEntity<>(locationService.searchRegionForLocations(model), HttpStatus.OK);
     }
 }

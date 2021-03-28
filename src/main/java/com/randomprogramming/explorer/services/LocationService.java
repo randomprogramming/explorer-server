@@ -7,6 +7,7 @@ import com.randomprogramming.explorer.entities.Location;
 import com.randomprogramming.explorer.entities.Media;
 import com.randomprogramming.explorer.entities.Person;
 import com.randomprogramming.explorer.models.LocationModel;
+import com.randomprogramming.explorer.models.RegionModel;
 import com.randomprogramming.explorer.repositories.LocationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -100,5 +101,16 @@ public class LocationService {
         if (person == null) throw new UsernameNotFoundException("Username " + username + " was not found.");
 
         return person.getLikedLocations();
+    }
+
+    public Page<Location> searchRegionForLocations(RegionModel model) {
+        double latitudeMin = model.getLatitude() - model.getLatitudeDelta();
+        double latitudeMax = model.getLatitude() + model.getLatitudeDelta();
+        double longitudeMin = model.getLongitude() - model.getLongitudeDelta();
+        double longitudeMax = model.getLongitude() + model.getLongitudeDelta();
+
+//        TODO: Maybe remove limit or make it smaller/larger
+        return locationRepository.findAllByLatitudeBetweenAndLongitudeBetween(
+                latitudeMin, latitudeMax, longitudeMin, longitudeMax, PageRequest.of(0, 15));
     }
 }
