@@ -1,6 +1,7 @@
 package com.randomprogramming.explorer.entities;
 
 import lombok.*;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -26,6 +27,9 @@ public class Location {
 
     @Column(nullable = false)
     private String title;
+
+    @Formula("(select count(*) from person_liked_locations pll where pll.location_id=id)")
+    private int likeCount;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Media> media;
