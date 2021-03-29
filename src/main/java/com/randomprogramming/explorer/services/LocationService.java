@@ -110,7 +110,7 @@ public class LocationService {
         double longitudeMax = model.getLongitude() + model.getLongitudeDelta();
 
 //        TODO: Maybe remove limit or make it smaller/larger
-        return locationRepository.findAllByLatitudeBetweenAndLongitudeBetween(
+        return locationRepository.findAllByLatitudeBetweenAndLongitudeBetweenOrderByLikeCount(
                 latitudeMin, latitudeMax, longitudeMin, longitudeMax, PageRequest.of(0, 15));
     }
 }

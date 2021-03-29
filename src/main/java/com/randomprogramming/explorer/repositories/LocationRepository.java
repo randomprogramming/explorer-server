@@ -14,6 +14,6 @@ public interface LocationRepository extends JpaRepository<Location, String> {
 
     Page<Location> findAllByTitleLike(String title, Pageable pageable);
 
-    Page<Location> findAllByLatitudeBetweenAndLongitudeBetween(
+    Page<Location> findAllByLatitudeBetweenAndLongitudeBetweenOrderByLikeCount(
             double latitudeMin, double latitudeMax, double longitudeMin, double longitudeMax, Pageable pageable);
 }

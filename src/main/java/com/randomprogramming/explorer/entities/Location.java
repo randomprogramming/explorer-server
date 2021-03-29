@@ -1,5 +1,6 @@
 package com.randomprogramming.explorer.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,6 +36,7 @@ public class Location {
     private Set<Media> media;
 
     @ManyToMany(mappedBy = "likedLocations")
+    @JsonIgnore
     private Set<Person> likedBy;
 
     @ManyToOne(cascade = CascadeType.ALL)
