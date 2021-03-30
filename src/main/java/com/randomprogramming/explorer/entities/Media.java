@@ -22,7 +22,10 @@ public class Media {
 
     private String url;
 
-    public Media(String url) {
+    private boolean isThumbnail;
+
+    public Media(String url, boolean isThumbnail) {
         this.url = url;
+        this.isThumbnail = isThumbnail;
     }
 }

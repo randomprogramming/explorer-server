@@ -37,6 +37,7 @@ public class LocationService {
             return false;
         }
 
+
         var person = personService.getPersonFromUsername(username);
         if (person == null) {
             return false;
@@ -52,7 +53,11 @@ public class LocationService {
                             "transformation", new Transformation().quality("auto")));
 
             String url = (String) response.get("url");
-            mediaSet.add(new Media(url));
+            // If the file name is equals to 0, meaning it's the first element in the array on the
+            // front end, set it as the thumbnail image
+            Optional<String> imageNameOptional = Optional.ofNullable(image.getOriginalFilename());
+            var isThumbnail = imageNameOptional.isPresent() && imageNameOptional.get().equals("0");
+            mediaSet.add(new Media(url, isThumbnail));
         }
         log.info("File upload finished");
 
