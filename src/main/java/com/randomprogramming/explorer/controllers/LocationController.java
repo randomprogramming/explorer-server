@@ -56,15 +56,32 @@ public class LocationController {
                     "Failed to like location, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/liked")
+    @GetMapping("/dislike/{id}")
+    public ResponseEntity<String> removeLikeFromLocation(@PathVariable String id, HttpServletRequest req) {
+        if (locationService.removeLikeFromLocation(id, personService.getUsernameFromRequest(req)))
+            return new ResponseEntity<>("Location unliked!", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(
+                    "Failed to unlike location, please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/liked") //TODO: add a added date, when person liked location and sort by it
     public ResponseEntity<?> getLikedLocations(HttpServletRequest req) {
         try {
             return new ResponseEntity<>(
                     locationService.getLikedLocations(personService.getUsernameFromRequest(req)), HttpStatus.OK);
         } catch (UsernameNotFoundException e) {
             log.error(e);
-            return new ResponseEntity<>("Username not found.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    "Error when checking for liked locations, please try again.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/liked/{id}")
+    public ResponseEntity<Boolean> checkIfLocationIsLiked(@PathVariable String id, HttpServletRequest req) {
+        // Checks if the user liked the location with the provided id
+        return new ResponseEntity<>(
+                locationService.hasUserLikedLocation(id, personService.getUsernameFromRequest(req)), HttpStatus.OK);
     }
 
     @PostMapping("/region")

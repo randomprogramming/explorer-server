@@ -91,10 +91,32 @@ public class LocationService {
         if (location.isPresent()) {
             // Since we're using a Set, we don't have to check if user already liked the location
             Set<Location> likedLocations = person.getLikedLocations();
-            likedLocations.add(location.get());
-            person.setLikedLocations(likedLocations);
+            if (!likedLocations.add(location.get())) return false;
 
+            person.setLikedLocations(likedLocations);
             return personService.save(person);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeLikeFromLocation(String locationId, String personUsername) {
+        Person person = personService.getPersonFromUsername(personUsername);
+        if (person == null) return false;
+
+        Optional<Location> location = locationRepository.findFirstById(locationId);
+
+        if (location.isPresent()) {
+            // Since we're using a Set, we don't have to check if user already liked the location
+            Set<Location> likedLocations = person.getLikedLocations();
+            boolean wasRemoved = likedLocations.remove(location.get());
+
+            if (wasRemoved) {
+                person.setLikedLocations(likedLocations);
+                personService.save(person);
+            }
+
+            return wasRemoved;
         } else {
             return false;
         }
@@ -117,5 +139,14 @@ public class LocationService {
 //        TODO: Maybe remove limit or make it smaller/larger
         return locationRepository.findAllByLatitudeBetweenAndLongitudeBetweenOrderByLikeCount(
                 latitudeMin, latitudeMax, longitudeMin, longitudeMax, PageRequest.of(0, 15));
+    }
+
+    public boolean hasUserLikedLocation(String locationId, String personUsername) {
+        Person person = personService.getPersonFromUsername(personUsername);
+        if (person == null) return false;
+
+        Optional<Location> location = locationRepository.findFirstById(locationId);
+
+        return location.filter(value -> person.getLikedLocations().contains(value)).isPresent();
     }
 }
