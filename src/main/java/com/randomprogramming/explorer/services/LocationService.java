@@ -78,8 +78,7 @@ public class LocationService {
         // Also maybe increase the size of the searched fields? Idk
         // TODO: Also make the search actually do something because right now you have to type the exact
         // name of the location
-        Page<Location> locations = locationRepository.findAllByTitleLike(searchQuery, PageRequest.of(0, 15));
-        return locations;
+        return locationRepository.search(searchQuery, PageRequest.of(0, 15));
     }
 
     public boolean markLocationAsLiked(String locationId, String personUsername) {
