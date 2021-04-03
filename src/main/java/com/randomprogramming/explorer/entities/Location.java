@@ -29,6 +29,9 @@ public class Location {
     @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "text")
+    private String description;
+
     @Formula("(select count(*) from person_liked_locations pll where pll.location_id=id)")
     private int likeCount;
 
@@ -42,11 +45,14 @@ public class Location {
     @ManyToOne(cascade = CascadeType.ALL)
     private Person createdBy;
 
-    public Location(double latitude, double longitude, String title, Set<Media> media, Person createdBy) {
+    public Location(double latitude, double longitude, String title, String description,
+                    Set<Media> media, Person createdBy) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
+        this.description = description;
         this.media = media;
         this.createdBy = createdBy;
     }
+
 }

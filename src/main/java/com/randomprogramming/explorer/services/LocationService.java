@@ -32,11 +32,11 @@ public class LocationService {
     }
 
     public boolean addLocation(LocationModel model, String username) throws IOException {
-        if (model.getMedia().length == 0) {
+        if (model.getMedia().length == 0 || model.getDescription().length() > 512) {
             // Location must have at least one picture
+            // Description may not be longer than 512 chars
             return false;
         }
-
 
         var person = personService.getPersonFromUsername(username);
         if (person == null) {
@@ -61,7 +61,8 @@ public class LocationService {
         }
         log.info("File upload finished");
 
-        var location = new Location(model.getLatitude(), model.getLongitude(), model.getTitle(), mediaSet, person);
+        var location = new Location(
+                model.getLatitude(), model.getLongitude(), model.getTitle(), model.getDescription(), mediaSet, person);
 
         try {
             locationRepository.save(location);

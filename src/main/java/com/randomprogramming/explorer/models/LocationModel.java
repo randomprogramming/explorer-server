@@ -8,6 +8,7 @@ public class LocationModel {
     private double latitude;
     private double longitude;
     private String title;
+    private String description;
     private MultipartFile[] media;
 
     public boolean hasNullValues() {
