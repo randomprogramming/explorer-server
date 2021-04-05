@@ -36,11 +36,12 @@ public class Location {
     private int likeCount;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy(value = "isThumbnail DESC")
     private Set<Media> media;
 
-    @ManyToMany(mappedBy = "likedLocations")
     @JsonIgnore
-    private Set<Person> likedBy;
+    @OneToMany(mappedBy = "likedLocation")
+    private Set<PersonLikesAssociation> likedByAssociations;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Person createdBy;

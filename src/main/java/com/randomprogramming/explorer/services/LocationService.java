@@ -3,12 +3,15 @@ package com.randomprogramming.explorer.services;
 import com.cloudinary.Singleton;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.randomprogramming.explorer.comparators.SortPersonLikesAssociationByLikeDate;
 import com.randomprogramming.explorer.entities.Location;
 import com.randomprogramming.explorer.entities.Media;
 import com.randomprogramming.explorer.entities.Person;
+import com.randomprogramming.explorer.entities.PersonLikesAssociation;
 import com.randomprogramming.explorer.models.LocationModel;
 import com.randomprogramming.explorer.models.RegionModel;
 import com.randomprogramming.explorer.repositories.LocationRepository;
+import com.randomprogramming.explorer.repositories.PersonLikesAssociationRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +25,18 @@ import java.util.*;
 @Service
 @Log4j2
 public class LocationService {
+    final private PersonLikesAssociationRepository plaRepository;
+
     final private LocationRepository locationRepository;
 
     final private PersonService personService;
 
-    public LocationService(LocationRepository locationRepository, PersonService personService) {
+    public LocationService(LocationRepository locationRepository,
+                           PersonService personService,
+                           PersonLikesAssociationRepository personLikesAssociationRepository) {
         this.locationRepository = locationRepository;
         this.personService = personService;
+        this.plaRepository = personLikesAssociationRepository;
     }
 
     public boolean addLocation(LocationModel model, String username) throws IOException {
@@ -86,48 +94,41 @@ public class LocationService {
         Person person = personService.getPersonFromUsername(personUsername);
         if (person == null) return false;
 
-        Optional<Location> location = locationRepository.findFirstById(locationId);
+        Optional<Location> locationOptional = locationRepository.findFirstById(locationId);
 
-        if (location.isPresent()) {
-            // Since we're using a Set, we don't have to check if user already liked the location
-            Set<Location> likedLocations = person.getLikedLocations();
-            if (!likedLocations.add(location.get())) return false;
+        if (locationOptional.isPresent()) {
+            Location location = locationOptional.get();
 
-            person.setLikedLocations(likedLocations);
-            return personService.save(person);
-        } else {
-            return false;
+            // If the association doesn't already exist, create it
+            if (!plaRepository.existsByPersonIdAndLocationId(person.getId(), location.getId())) {
+                var pla = new PersonLikesAssociation(person, location);
+                plaRepository.save(pla);
+                return true;
+            }
         }
+        return false;
     }
 
     public boolean removeLikeFromLocation(String locationId, String personUsername) {
         Person person = personService.getPersonFromUsername(personUsername);
         if (person == null) return false;
 
-        Optional<Location> location = locationRepository.findFirstById(locationId);
-
-        if (location.isPresent()) {
-            // Since we're using a Set, we don't have to check if user already liked the location
-            Set<Location> likedLocations = person.getLikedLocations();
-            boolean wasRemoved = likedLocations.remove(location.get());
-
-            if (wasRemoved) {
-                person.setLikedLocations(likedLocations);
-                personService.save(person);
-            }
-
-            return wasRemoved;
-        } else {
-            return false;
+        try {
+            plaRepository.deleteByPersonIdAndLocationId(person.getId(), locationId);
+            return true;
+        } catch (Exception e) {
+            log.error(e);
+            e.printStackTrace();
         }
+        return false;
     }
 
     // TODO: Implement pagination
-    public Set<Location> getLikedLocations(String username) throws UsernameNotFoundException {
+    public List<Location> getLikedLocations(String username) throws UsernameNotFoundException {
         Person person = personService.getPersonFromUsername(username);
         if (person == null) throw new UsernameNotFoundException("Username " + username + " was not found.");
 
-        return person.getLikedLocations();
+        return person.getLikedLocations(new SortPersonLikesAssociationByLikeDate());
     }
 
     public Page<Location> searchRegionForLocations(RegionModel model) {
@@ -136,7 +137,7 @@ public class LocationService {
         double longitudeMin = model.getLongitude() - model.getLongitudeDelta();
         double longitudeMax = model.getLongitude() + model.getLongitudeDelta();
 
-//        TODO: Maybe remove limit or make it smaller/larger
+        // Limit to 15 results per search
         return locationRepository.findAllByLatitudeBetweenAndLongitudeBetweenOrderByLikeCount(
                 latitudeMin, latitudeMax, longitudeMin, longitudeMax, PageRequest.of(0, 15));
     }
@@ -145,8 +146,9 @@ public class LocationService {
         Person person = personService.getPersonFromUsername(personUsername);
         if (person == null) return false;
 
-        Optional<Location> location = locationRepository.findFirstById(locationId);
+        Optional<Location> locationOptional = locationRepository.findFirstById(locationId);
 
-        return location.filter(value -> person.getLikedLocations().contains(value)).isPresent();
+        return locationOptional.filter(location ->
+                plaRepository.existsByPersonIdAndLocationId(person.getId(), location.getId())).isPresent();
     }
 }

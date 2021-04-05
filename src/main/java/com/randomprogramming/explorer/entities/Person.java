@@ -5,7 +5,10 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 // Lombok hashcode breaks everything, do not use
 @ToString
@@ -34,14 +37,9 @@ public class Person {
 
     private String profilePictureUrl;
 
-    @ManyToMany
-    @JoinTable(
-            name = "person_liked_locations",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "location_id")
-    )
     @JsonIgnore
-    private Set<Location> likedLocations;
+    @OneToMany(mappedBy = "likedBy")
+    private Set<PersonLikesAssociation> likedLocationsAssociations;
 
     @JsonIgnore
     @OneToMany(mappedBy = "createdBy")
@@ -53,5 +51,20 @@ public class Person {
         this.username = username;
         this.password = password;
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public List<Location> getLikedLocations() {
+        return this.getLikedLocationsAssociations()
+                .stream()
+                .map(PersonLikesAssociation::getLikedLocation)
+                .collect(Collectors.toList());
+    }
+
+    public List<Location> getLikedLocations(Comparator<PersonLikesAssociation> comparator) {
+        return this.getLikedLocationsAssociations()
+                .stream()
+                .sorted(comparator)
+                .map(PersonLikesAssociation::getLikedLocation)
+                .collect(Collectors.toList());
     }
 }
